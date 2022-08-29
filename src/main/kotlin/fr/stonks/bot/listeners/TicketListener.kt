@@ -22,24 +22,18 @@ object TicketListener : ListenerAdapter() {
 		if(event.name != "ticket")return
 		if(!member!!.hasPermission(ADMINISTRATOR))return
 		
-		event.replyEmbeds(EmbedBuilder()
-			.setTitle("Ouvrir un ticket")
-			.setThumbnail(event.guild!!.iconUrl)
-			.setDescription("Clique ci dessous pour ouvrir un ticket, \n les comissions de robot discord, de plugin minecraft, de front end/backend et de launcher sont ouverte !")
-			.setColor(Color(47, 49, 54))
-			.build()
-		).addActionRow(Button.success("ticket", "Click ici !")).queue()
+		TicketManager.sendTicketMessage(event)
 	}
 	
 	override fun onButtonInteraction(event: ButtonInteractionEvent) {
 		if(event.button.id == "ticket") {
-			if(TicketManager.hasTicket(event.member)) {
+			if(TicketManager.hasTicket(event.member!!)) {
 				event.reply("Tu as déjà un ticket").setEphemeral(true).queue()
 				return
 			}
 			event.replyModal(TicketManager.request()).queue()
 		}
-		if(event.button.id == "delete") event.channel.delete().queue()
+		if(event.button.id == "delete-ticket") TicketManager.deleteTicket(event.channel.asTextChannel())
 	}
 	
 	override fun onModalInteraction(event: ModalInteractionEvent) {
